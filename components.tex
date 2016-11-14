@@ -1,0 +1,66 @@
+\section{Functional Components}
+\label{functional-components}
+
+ Seen from a high-level, the Parity Polkadot Platform stack has a number of functional components and any development of it will require a substantial amount of research and development prior to it being completed.
+
+ Some components are dependent on others existing, others are independent. Some are very important for the platform to function properly, others are \textit{nice-to-have}s. Some are of indeterminate complexity and have not yet been deemed feasible, others are relatively straight-forward.
+
+ Here we'll try to list as many such components as possible along with where they would fit into our development roadmap.
+
+\begin{description}
+
+\item[Networking subsystem] This is the means by which a peer network is formed and maintained. Simple alterations of existing peer-to-peer networking libraries (devp2p most likely) will be sufficient for an initial system. However, additional research and development will be necessary to ensure that as the network grows, the network topology becomes increasingly structured allowing for optimal data logistics. For the final deployment, adaptations of libp2p, devp2p and GNUnet should be first considered. If requirements are not likely to be met then a new protocol should be considered.
+
+\item[Consensus mechanism] Proof-of-authority consensus mechanism supporting rich validator statements and allowing multiple independent items to be agreed upon under a single series based upon subjective reception of the partial set of validator statements. The mechanism should allow the proof of misbehaviour for the dismissal of malicious validators but need not involve any staking mechanism. A substantial amount of research and prototyping will precede the development of this component.
+
+\item[Proof-of-stake chain] Extending the consensus mechanism into proof-of-stake territory; this module includes  staking tokens, managing entry and exit from the validator pool, a market mechanism for determining validator rewards, finalising the approval-voting nomination mechanism and managing bond-confiscation and dismissal. It includes a substantial amount of research and prototyping prior to final development.
+
+\item[Parachain implementation] A first parachain implementation, likely to be based heavily on an existing blockchain protocol such as Bitcoin or (more likely, since it provides for rich transactions) Ethereum. This will include an integration with the proof-of-stake chain, allowing the parachain to gain consensus without its own internal consensus mechanism.
+
+\item[Transaction processing subsystem] An evolution of the parachain and relay-chain, this will allow for transactions to be sent, received and propagated. It includes the designs of transaction queuing and optimised transaction routing on the network layer.
+
+\item[Transaction-routing subsystem] This introduces more specifics into the relay-chain's behaviour. Initially, adding transactability into parachains will be needed. Following that, with two parachains hard-coded into the relay-chain, it will include the management of the ingress/egress queues. Eventually this will develop along with the network protocol into a means of directed transaction propagation, ensuring independent parachain collators are not overly exposed to transactions that are not of interest.
+
+\item[Relay chain] This is the final stage of the relay-chain, allowing the dynamic addition, removal and emergency pausing of parachains, the reporting of bad behaviour and includes implementation of the ``fisherman'' functionality.
+
+\item[Independent collators] This is the delivery of an alternative chain-specific collator functionality. It includes proof creation (for collators), parachain misbehaviour detection (for fishermen) and the validation function (for validators). It also includes any additional networking required to allow the two to discover and communicate.
+
+\item[Network dynamics modelling and research] The overall dynamics of this protocol should be researched thoroughly. This can happen both through offline network modelling and through empirical evidence through simulated nodes. The latter is dependent on the relay-chain and will include the development of a structured logging protocol allowing nodes to submit detailed reports on their actions to a central hub for collation.
+
+\item[Network intelligence] As a complex decentralised multi-party network, a network intelligence hub similar to \url{http://ethstats.net} is needed to monitor the life-signs of the network as a whole and flag potentially disruptive behaviour. Structured logging should be used to generate and visualise this data in real-time for maximum efficiency. It is dependent on the relay-chain being in a reasonably complete state.
+
+\item[Information publication platform] This is a mechanism for publishing data relating to the blockchain, and effectively means a decentralised content-discovery network. Initially it can be handled by basic peer-to-peer lookups but for deployment will likely require a more structured and robust solution since availability will become a critical piece of information. IPFS integration may be the most sensible means of achieving these goals.
+
+\item[Javascript interaction bindings] The main means of interacting with the network will likely follow the example of Ethereum and as such high-quality Javascript bindings are critical to have. Our bindings will cover interactions with the relay-chain and the initial parachain and as such depends on them.
+
+\item[Governance] Initially, this will be a meta-protocol on the relay-chain for managing exceptional events such as hard-forks, soft-forks and protocol reparameterisation. It will include a modern structure to help manage conflict and prevent live-lock. Ultimately, this may become a full meta-protocol layer able to enact changes normally reserved for hard-forks. Requires the relay chain.
+
+\item[Interaction platform] A platform by which ``typical'' users are able to interact with the system, along with minimal functionality to facilitate common tasks such as entering the bond process, voting, nomination, becoming a validator, fisherman or collator and staking token transfer. Depends upon having a functional relay-chain.
+
+\item[Light clients] Light-client technology for both the relay-chain and any parachains developed. This will allow clients to be able to gain information regarding activity on the chains with a high degree of trust-freedom and without any substantial requirement of storage or bandwidth. Depends upon the relay-chain.
+
+\item[Parachain UI] A multi-chain, multi-token wallet and identity management system. It requires light-client technology and the interaction platform. This is not needed for any initial network deployment.
+
+\item[On-chain Dapp services] There may be various services that will need to be deployed on any initial parachains such as registration hubs for APIs, names, natural-language specifications and code. This depends on the parachain but is not strictly needed for any initial network deployment.
+
+\item[Application development tools] This includes various bits of software required to help developers. Examples include compilers, key management tools, data archivers and VM simulators. Many others exist. These will need to be developed as required. Technologies will be chosen partly to minimise the need for such tools. Many will not be strictly required.
+
+\item[Ethereum-as-a-parachain] Trust-free bridge to Ethereum and back again, allowing posted transactions to be routed from parachains into Ethereum (and treated like any other transaction of external origin) and allow Ethereum contracts to be able to post transactions to parachains and the accounts therein. Initially, this will be modelled to ascertain feasibility and get any structural limitations based around the number of validators required by the consensus process, a component on which it is dependent. A proof-of-concept can be built following this and final development will be dependent on the relay-chain itself.
+
+\item[Bitcoin-RPC compatibility layer] A simple RPC compatibility layer for the relay-chain allowing infrastructure already built using that protocol to be interoperable with Polkadot and as such minimise effort for support. A stretch goal requiring the relay-chain.
+
+\item[Web 2.0 bindings] Bindings into common Web 2.0 technology stacks to facilitate the usage of Polkadot infrastructure with legacy systems. A stretch goal dependent on the initial parachains and any on-chain infrastructure to be exposed.
+
+\item[zk-SNARK parachain example] A parachain utilising the properties of zk-SNARKs in order to ensure identities of transactors on it are kept private. A stretch goal dependent on the relay-chain.
+
+\item[Encrypted parachain example] A parachain that keeps each item of state encrypted and signed. These ensure the enforcement of access controls over inspection and modification of the data therein allowing commercial regulated operations to conform as necessary. Would include proof-of-authority mechanisms to allow Polkadot validators to guarantee some degree of correctness of state transitions without gaining exposure  to the underlying information. A stretch goal depending on the relay-chain.
+
+\item[Trust-free Bitcoin bridge] Trust-free Bitcoin ``two-way-peg'' functionality. This would possibly use threshold signatures or alternatively an $n$ of $m$ multi-signature Bitcoin account together with SPV proofs \& specialised fishermen. Development is predicated on an initial feasibility analysis giving a favourable result. Some additional functionality may need to be added to (or unlocked from) the Bitcoin protocol to support this functionality.
+
+\item[Abstract/low-level decentralised applications] Trust-free token exchange, asset-tracking infrastructure, crowd-sale infrastructure.
+
+\item[Contract language] Certainly not an integral part of the project, but a nice stretch-goal nonetheless. Would include a safe contract language together with tutorials, guidelines and educational tools. It may include means of making formal proofs as per the original Solidity language vision or could be based around some other programming paradigm which helps minimise critical process errors such as functional programming or condition-orientated programming.
+
+\item[IDE] Based on the contract language, this would facilitate editing, collaboration, publication and debugging of contracts on the parachains. A far stretch goal.
+
+\end{description}

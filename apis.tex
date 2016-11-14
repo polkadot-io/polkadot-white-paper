@@ -1,0 +1,58 @@
+\section{APIs}\label{apis}
+
+\subsubsection{Master-chain APIs}\label{master-chain-apis}
+
+ Example APIs for certain components of the master chain:
+
+\paragraph{Validator set}\label{validator-set}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{register\_validator()}
+\item
+  \texttt{unregister\_validator()}
+\item
+  \texttt{delegate\_to(validator)}
+\end{itemize}
+
+\paragraph{Sessions}\label{sessions}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{set\_session\_key()}
+\item
+  \texttt{revoke\_session\_key} (from: validator) revokes the
+   validator's session key; that party forfeits any further payout of   this session.
+\item
+  \texttt{session\_validators()}
+\end{itemize}
+
+\paragraph{Invalidity Reporting}\label{invalidity-reporting}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{inform\_invalid\_subchain\_block(chain\_id,\ block,\ proof)}
+  (from: fisherman/validator) verify \texttt{number} is less than
+  \texttt{MAX\_REORG\_DEPTH}, if so verify \texttt{block} was the
+  ratified sub-chain \texttt{chain-id} block at according number; if so,
+  verify that the \texttt{block} is an invalid child according to
+  \texttt{proof}; if so, call \texttt{EXILE\_VALIDATORS} with
+  \texttt{bad} as the validators who actively ratified that sub-chain
+  block, with \texttt{honest} as all other validators and with
+  \texttt{informant} as the caller. if not, \texttt{EXILE\_FISHERMAN}
+  with \texttt{bad} as the caller.\\
+\item
+  \texttt{inform\_double\_signed\_blocks(number,\ alt\_header,\ signatures{[}{]})}
+  (from: fisherman/validator) verify \texttt{alt\_header} is a sibling
+  of the ratified block at height \texttt{number}, if so verify that
+  each of \texttt{signatures} are ratification signatures; if so, call
+  \texttt{EXILE\_VALIDATORS} with \texttt{bad} as the validator owning
+  the session key, with \texttt{honest} as all other validators, with
+  \texttt{master\_quotient} as \texttt{signatures.len()} and with
+  \texttt{informant} as the caller. if not, \texttt{EXILE\_FISHERMAN}
+  with \texttt{bad} as the caller.
+\end{itemize}
+
